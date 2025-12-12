@@ -137,7 +137,7 @@ class Review(db.Model):                                                         
     updated_at = db.Column(db.DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))     # 수정시간        # 자동입력     # 기본값있음
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))                                                                                   # user 테이블 참조
-    places_id = db.Column(db.Integer, db.ForeignKey('places.id', ondelete='CASCADE'))                                                                                 # place 테이블 참조
+    places_id = db.Column(db.Integer, db.ForeignKey('places.id', ondelete='CASCADE'))                                                                               # place 테이블 참조
     activity_id = db.Column(db.Integer, db.ForeignKey('activity.id', ondelete='CASCADE'))                                                                           # activity 테이블 참조
     festivals_id = db.Column(db.Integer, db.ForeignKey('festivals.id', ondelete='CASCADE'))                                                                         # festivals 테이블 참조
 
