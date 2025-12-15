@@ -3,8 +3,8 @@ import './App.css';
 import { useEffect, useState } from "react";
 import { Container, Nav, Navbar } from 'react-bootstrap';
 import { Route, Routes, useNavigate } from 'react-router-dom';
-import Auth from './constants/Auth';
-import Login from './constants/Login';
+import Auth from './contents/user/SignUp';
+import Login from './contents/user/Login';
 
 function App() {
   const navigate = useNavigate();
