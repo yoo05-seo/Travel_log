@@ -17,7 +17,7 @@ const PlaceDetailPage = () => {
             <div className="spg-content">
                 <h1 className="spg-jeju-title">JEJU</h1>
                 <div className="sec1">
-                    <div className="PDtext">
+                    <div className="text">
                         <h2 className="spg-subplace-title">스누피 가든</h2>
                         <p className="spg-subplace2-title">
                             Snoopy Garden(스누피 가든)은 제주 구좌읍에 있는 피너츠(Peanuts) 만화 캐릭터 스누피와 친구들을 테마로 꾸민 체험형 정원형 관광지입니다. 제주의 자연 속에서
