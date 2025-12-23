@@ -29,8 +29,8 @@ html, body {position: relative; height: 100%; margin: 0; padding: 0; background:
 .festivalSwiper .swiper-slide-active {opacity: 1; transform: scale(1.1); z-index: 10;}
 .festivalSwiper .swiper-button-next, .festivalSwiper .swiper-button-prev {width: 0; height: 0; background: none; top: 50%; transform: translateY(-50%); z-index: 20;}
 .festivalSwiper .swiper-button-next::after, .festivalSwiper .swiper-button-prev::after {display: none;}
-.festivalSwiper .swiper-button-next {border-top: 20px solid transparent; border-bottom: 20px solid transparent; border-left: 20px solid #A1A1A1; right: 70px;}
-.festivalSwiper .swiper-button-prev {border-top: 20px solid transparent; border-bottom: 20px solid transparent; border-right: 20px solid #A1A1A1; left: 70px;}
+.festivalSwiper .swiper-button-next {border-top: 20px solid transparent; border-bottom: 20px solid transparent; border-left: 20px solid #A1A1A1; right: 30px;}
+.festivalSwiper .swiper-button-prev {border-top: 20px solid transparent; border-bottom: 20px solid transparent; border-right: 20px solid #A1A1A1; left: 30px;}
 @media (max-width: 1024px) {
 .section-header {max-width: 90%;}
 .destination-card-row {flex-direction: column; align-items: center; gap: 30px;}
