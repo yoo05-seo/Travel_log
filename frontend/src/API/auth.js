@@ -6,10 +6,15 @@ export const check = (field, value) =>{
 
 
 // 회원가입
-export const signUp = (userData) => {
-    return apiClient.post('/api/SignUp', userData);
+export const signUp = (formData) => {
+    return apiClient.post('/api/signUp', formData);
 };
 
-// export const login = (id, pw)=>{
+// 로그인
+export const login = (userid, password) => {
+    return apiClient.post('/api/login', { userid, password });
+};
 
-// }
+export const getMe = () => {
+    return apiClient.get('/api/me')
+}

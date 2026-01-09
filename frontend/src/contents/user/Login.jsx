@@ -1,25 +1,45 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import './Login.css'
+
+import { login } from '../../API/auth';
+import './user.css'
 
 
 const Login = () => {
-    const [id, setId] = useState('');
-    const [pw, setPw] = useState('');
-    const [loading, setLoading] = useState('');
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    const [userid, setUserid] = useState('');
+    const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
+    const handleLogin = async (e) => {
+        e.preventDefault()
+
+        if (loading) return
+
+        if(!userid||!password){
+            alert("아이디와 비밀번호를 입력해 주세요")
+        }
+        try{
+            const res = await login(userid, password)
+            localStorage.setItem('access_token', res.data.access_token)
+            alert('로그인 성공')
+            window.location.href = '/'
+        }catch{
+
+            alert('로그인 실패');
+        } finally {
+            setLoading(false)
+        }
     };
     return (
         <div className="login-wrap">
             <div className='login-inner'>
                 <div className="bg-wrap"></div>
                 <div className="login__form-wrap">
-                    <form>
-                        <img className='logo' src='/images/login/logo.png' alt="TRAVELOGUE" />
+                    <form onSubmit={handleLogin}>
+                        <img className='logo' src='/images/common/logo.png' alt="TRAVELOGUE" />
                         <span className="text">Journey Into New Paths and Unseen Horizons</span>
-                        <input className="login-input" type="text" placeholder="아이디" />
-                        <input className="login-input" type="password" placeholder="비밀번호" />
+                        <input className="login-input" type="text" placeholder="아이디" value={userid} 
+                            onChange={(e) => setUserid(e.target.value)} />
+                        <input className="login-input" type="password" placeholder="비밀번호" value={password} onChange={(e) => setPassword(e.target.value)} />
                         <button className="btn-login" type="submit">
                             로그인
                         </button>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { GENDER } from '../../constants/enums';
 import { check, signUp } from '../../API/auth';
-import './SignUp.css';
+import './user.css';
 
 const SignUp = () => {
   const [form, setForm] = useState({
@@ -28,11 +28,14 @@ const SignUp = () => {
     username: null,
     phone: null,
   });
-  
-  const [file, setFile] = useState('')
-  const [view, setView] = useState('')
-  const API_BASE = 'http://localhost:5000'
-  const DEFAULT_IMG = `${API_BASE}/static/user_img/default.jpg`
+
+  const phoneRegex = /^010-?\d{4}-?\d{4}$/;
+
+  const [file, setFile] = useState(null);
+  const [view, setView] = useState('');
+
+  const API_BASE = 'http://localhost:5000';
+  const DEFAULT_IMG = `${API_BASE}/static/user_img/default.jpg`;
 
 
   const handleFileChange = (e) => {
@@ -51,7 +54,13 @@ const SignUp = () => {
       [name]: value,
     }));
 
-    // 입력이 바뀌면 중복 메시지 & 상태 초기화
+    if (name === 'phone' && !phoneRegex.test(value)) {
+      setDupMsg((prev) => ({
+        ...prev,
+        phone: '전화번호 형식이 다릅니다.',
+      }));
+    }
+
     if (['userid', 'email', 'username', 'phone'].includes(name)) {
       setDupMsg(prev => ({
         ...prev,
@@ -96,9 +105,9 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const { userid, password, password2, email, username } = form;
+    const { userid, password, password2, email, username, phone } = form;
 
-    if (!userid || !password || !password2 || !email || !username) {
+    if (!userid || !password || !password2 || !email || !username || !phone) {
       alert('필수 항목을 모두 입력해주세요.');
       return;
     }
@@ -114,12 +123,19 @@ const SignUp = () => {
     }
 
     const formData = new FormData();
-    Object.entries(form).forEach(([KeyboardEvent, value])=>{
-      formData.append('profile_image', file)
-    })
+
+    Object.entries(form).forEach(([key, value]) => {
+      if (key !== 'password2') {
+        formData.append(key, value);
+      }
+    });
+
+    if (file) {
+      formData.append('profile_image', file);
+    }
 
     try {
-      await signUp(form);
+      await signUp(formData);
       alert('회원가입이 완료되었습니다.');
       window.location.href = '/Login';
     } catch (err) {
@@ -135,12 +151,13 @@ const SignUp = () => {
           <div className="profile">
             <div className="img-wrap">
               {view ? (
-                <img src={view || DEFAULT_IMG} alt='프로필 미리보기'/>
-              ):(
-                <span className='preview' ><img src={DEFAULT_IMG} alt="" /></span> 
+                <img src={view || DEFAULT_IMG} alt='프로필 미리보기' />
+              ) : (
+                <span className='preview' ><img src={DEFAULT_IMG} alt="" /></span>
               )}
             </div>
-            <label className="text"> 프로필 사진 추가 <input type='file' accept='image/*' onChange={handleFileChange}hidden /></label>
+            <label className="text"> 프로필 사진 추가 <input type='file' accept='image/*' onChange={handleFileChange} hidden /></label>
+          </div>
           <form className="signup-form" onSubmit={handleSubmit}>
             <input
               className="signup-input"
@@ -215,20 +232,18 @@ const SignUp = () => {
             />
             <p>{dupMsg.phone}</p>
 
+
             <button className="signup-submit-button" type="submit">
               회원가입
             </button>
           </form>
 
-          <span className="text">
-            <a href="/Login">계정을 가지고 계십니까?</a>
-          </span>
-        </div>
+          <a href="/Login" className="text">계정을 가지고 계십니까?</a>
         </div>
 
-        <div className="bg-wrap"></div>
+          <div className="bg-wrap"></div>
+        </div>
       </div>
-    </div>
   );
 };
 

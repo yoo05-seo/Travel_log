@@ -1,64 +1,95 @@
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Grid, Pagination } from "swiper/modules";
+import React, { useEffect, useMemo, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import { getPlaces } from "../../API/places";
+import Pagination from "../../components/common/Pagination";
 
-import "swiper/css";
-import "swiper/css/grid";
-import "swiper/css/pagination";
-import "./PlaceListPage.css";
+const PER_PAGE = 12;
 
-const places = Array.from({ length: 9 }).map((_, i) => ({
-  id: i + 1,
-  img: `/images/placelist/sub${i + 1}.png`, // 경로 맞게 수정!
-  title: "Journey begins here",
-  desc: "여행지에서 마주하는 풍경은 사진보다 넓고, 일상보다 깊다. \n낮은 언덕위에서 내려다본 도시의 노다.",
-}));
+const PlaceListPage = () => {
+  const { type } = useParams();
+  const [places, setPlaces] = useState([]);
+  const [page, setPage] = useState(1);
 
-export default function ProvincePage() {
+  useEffect(() => {
+    getPlaces(type)
+      .then((res) => {
+        setPlaces(res.data);
+        setPage(1);
+      })
+      .catch((err) => console.error(err));
+  }, [type]);
+
+  const placeList = useMemo(
+    () =>
+      places.map((p) => ({
+        id: p.id,
+        img: `http://localhost:5000/${p.image?.[0] ?? ""}`,
+        title: p.name,
+        desc: p.description,
+      })),
+    [places]
+  );
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(placeList.length / PER_PAGE)
+  );
+
+  const pagedList = useMemo(() => {
+    const start = (page - 1) * PER_PAGE;
+    return placeList.slice(start, start + PER_PAGE);
+  }, [placeList, page]);
+
+  const type_Label = {
+    travel: "여행지",
+    festival: "축제",
+    activity: "액티비티",
+  };
+
   return (
-    <>
-      <section className="section-wrap">
-        <div className="section-img">
-          <img src="/images/placelist/main.png" alt="여행지" />
+    <div className="placelist-wrap">
+      <section className="placelist__header-wrap">
+        <div className="placelist__header">
           <p>Destination</p>
         </div>
 
-        <h2>평창</h2>
-        <p>평창의 다양한 여행지를 만나보세요!</p>
+        <div className="title-wrap">
+          <h2>{type_Label[type]}</h2>
+          <p>다양한 {type_Label[type]}를 만나보세요!</p>
+        </div>
 
-        <div className="section-search">
-          <button type="button" className="searchBtn">Search</button>
-          <input className="searchInput" placeholder="마음에 드는 여행지를 찾아보세요" />
+        <div className="placelist__search-wrap">
+          <form>
+            <input placeholder="마음에 드는 여행지를 찾아보세요" />
+            <button type="submit">Search</button>
+          </form>
         </div>
       </section>
 
-      <section className="section-b">
-        <Swiper
-          modules={[Grid, Pagination]}
-          spaceBetween={32}
-          pagination={{ clickable: true }}
-          breakpoints={{
-            0: { slidesPerView: 1, grid: { rows: 1 }, spaceBetween : 20 },        // 모바일
-            768: { slidesPerView: 2, grid: { rows: 2 }, spaceBetween : 24 },        // 태블릿
-            1024: { slidesPerView: 3, grid: { rows: 3, fill: "row" }, spaceBetween : 28 }, // PC
-          }}
-          className="mySwiper"
-        >
-          {places.map((item) => (
-            <SwiperSlide key={item.id}>
-              <article className="card">
-                <div className="card-img">
-                  <img src={item.img} alt={item.title} />
-                </div>
+      <section className="placelist__list-wrap">
+        {pagedList.map((place) => (
+          <div key={place.id} className="placelist__list-item">
+            <Link to={`/places/detail/${place.id}`}>
+              <div className="img-wrap">
+                <img src={place.img} alt={place.title} />
+              </div>
 
-                <div className="card-text">
-                  <h3>{item.title}</h3>
-                  <p>{item.desc}</p>
-                </div>
-              </article>
-            </SwiperSlide>
-          ))}
-        </Swiper>
+              <div className="text-wrap">
+                <p className="title">{place.title}</p>
+                <p className="text">{place.desc}</p>
+              </div>
+            </Link>
+          </div>
+        ))}
+
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          onChange={setPage}
+        />
       </section>
-    </>
+    </div>
   );
-}
+};
+
+export default PlaceListPage;

@@ -1,18 +1,33 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import { getHomePlace } from '../API/places';
 
 import 'swiper/css';
+import '../../src/main.css';
 // import 'swiper/css/navigation';
 // import 'swiper/css/pagination';
-import '../../src/main.css';
 
 const Home = () => {
     const [swiper, setSwiper] = useState(null);
     const isDraggingRef = useRef(false);
     const [isBeginning, setIsBeginning] = useState(true);
     const [isEnd, setIsEnd] = useState(false);
+    const [travel, setTravel] = useState([])
+    const [activity, setActivity] = useState([])
+    const [festival, setFestival] = useState([])
+
+
+    useEffect(() => {
+        getHomePlace()
+        .then(res => {
+            console.log("응답데이터", res.data);
+            setTravel(res.data.travel);
+            setActivity(res.data.activity);
+            setFestival(res.data.festival);})
+        .catch(err => console.error(err))
+        }, [])
 
     const stopClickIfDragging = (e) => {
         if (isDraggingRef.current) {
@@ -50,17 +65,16 @@ const Home = () => {
                                 <img src="/images/main/btn-more.png" alt="여행지 더보기" />
                             </Link>  */}
                             <div className="place-inner">
-                                <Link to='/places' className='place-item'>
-                                    <img src="/images/temp/temp2.png" alt="" />
-                                </Link>
-                                <Link to='/places' className='place-item'>
-                                    <img src="/images/temp/temp.png" alt="" />
-                                </Link>
-                                <Link to='/places' className='place-item'>
-                                    <img src="/images/temp/main_section02_temp_03.png " alt="" />
-                                </Link>
+                                {travel.map(place => (
+                                    <Link 
+                                    key={place.id}
+                                    to={`/places/detail/${place.id}`}
+                                    className='place-item'>
+                                    <img src={`http://localhost:5000/${place.image[0]}`} alt="" />
+                                    </Link>
+                                ))}
                             </div>
-                            <Link to='/places' className='btn-more type2'>
+                            <Link to='/places/travel' className='btn-more type2'>
                                 여행지 보러가기
                             </Link> 
                         </div>
@@ -76,27 +90,14 @@ const Home = () => {
                         </div>
                         <div className='activity-wrap'>
                             <div className='activity-inner'>
-                                <Link to='/activities' className='activity-item'>
-                                    <img src="/images/temp/main_section03_temp_01.png" alt="" />
-                                </Link>
-                                <Link to='/activities' className='activity-item'>
-                                    <img src="/images/temp/main_section03_temp_02.png" alt="" />
-                                </Link>
-                                <Link to='/activities' className='activity-item'>
-                                    <img src="/images/temp/main_section03_temp_03.png" alt="" />
-                                </Link>
-                                <Link to='/activities' className='activity-item'>
-                                    <img src="/images/temp/main_section03_temp_04.png" alt="" />
-                                </Link>
-                                <Link to='/activities' className='activity-item'>
-                                    <img src="/images/temp/main_section03_temp_05.png" alt="" />
-                                </Link>
-                                <Link to='/activities' className='activity-item'>
-                                    <img src="/images/temp/main_section03_temp_06.png" alt="" />
-                                </Link>
+                                {activity.map(place => (
+                                    <Link key={place.id} to={`/places/detail/${place.id}`}className='activity-item'>
+                                        <img src={`http://localhost:5000/${place.image[0]}`} alt="" />
+                                    </Link>
+                                ))}
                             </div>
                             
-                            <Link to='/activities' className='btn-more type2'>
+                            <Link to='/places/activity' className='btn-more type2'>
                                 액티비티 보러가기
                             </Link> 
                         </div>
@@ -152,41 +153,16 @@ const Home = () => {
                                         },
                                     }}
                                 >
-                                    <SwiperSlide className='festivals-item'>
-                                        <Link to='/festivals' className='festivals-link' onClick={stopClickIfDragging}>
-                                            <div className='img-wrap'>
-                                                <img src="/images/temp/main_section04_temp_01.png" alt="" loading="lazy" decoding="async" />
-                                            </div>
-                                        </Link>
-                                    </SwiperSlide>
-                                    <SwiperSlide className='festivals-item'>
-                                        <Link to='/festivals' className='festivals-link' onClick={stopClickIfDragging}>
-                                            <div className='img-wrap'>
-                                                <img src="/images/temp/main_section04_temp_02.png" alt="" loading="lazy" decoding="async" />
-                                            </div>
-                                        </Link>
-                                    </SwiperSlide>
-                                    <SwiperSlide className='festivals-item'>
-                                        <Link to='/festivals' className='festivals-link' onClick={stopClickIfDragging}>
-                                            <div className='img-wrap'>
-                                                <img src="/images/temp/main_section04_temp_03.png" alt="" loading="lazy" decoding="async" />
-                                            </div>
-                                        </Link>
-                                    </SwiperSlide>
-                                    <SwiperSlide className='festivals-item'>
-                                        <Link to='/festivals' className='festivals-link' onClick={stopClickIfDragging}>
-                                            <div className='img-wrap'>
-                                                <img src="/images/temp/main_section04_temp_04.png" alt="" loading="lazy" decoding="async" />
-                                            </div>
-                                        </Link>
-                                    </SwiperSlide>
-                                    <SwiperSlide className='festivals-item'>
-                                        <Link to='/festivals' className='festivals-link' onClick={stopClickIfDragging}>
-                                            <div className='img-wrap'>
-                                                <img src="/images/temp/main_section04_temp_05.png" alt="" loading="lazy" decoding="async" />
-                                            </div>
-                                        </Link>
-                                    </SwiperSlide>
+                                    {festival.map(place => (
+                                        <SwiperSlide className='festivals-item'>
+                                            <Link key={place.id} to={`/places/detail/${place.id}`} className='festivals-link' onClick={stopClickIfDragging}>
+                                                <div className='img-wrap'>
+                                                    <img src={`http://localhost:5000/${place.image[0]}`} alt="" loading="lazy" decoding="async" />
+                                                </div>
+                                            </Link>
+                                        </SwiperSlide>
+                                    ))}
+                                    
                                 </Swiper>
 
                                 <div className="section04__navigation-wrap">
@@ -209,7 +185,7 @@ const Home = () => {
                                 </div>
                             </div>
                             
-                            <Link to='/festivals' className='btn-more type2'>
+                            <Link to='/places/festival' className='btn-more type2'>
                                 축제 보러가기
                             </Link> 
                         </div>
