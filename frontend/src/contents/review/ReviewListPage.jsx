@@ -70,13 +70,11 @@ const ReviewListPage = () => {
                                     <td>{review.like_count}</td>
                                 </tr>
                             ))}
-                            {rlist.length === 0 && (
-                                <tr>
-                                    <td colSpan={5} style={{ textAlign: "center" }}>
-                                        검색 결과가 없습니다.
-                                    </td>
-                                </tr>
-                            )}
+                            {Array.from({ length: 0 }).map((_, i) => (
+                            <tr key={`empty-${i}`}>
+                                <td colSpan={ 5 } style={{'text-align' : 'center'}}>등록된 리뷰가 없습니다.</td>
+                            </tr>
+                            ))}
 
                         </tbody>
                     </table>

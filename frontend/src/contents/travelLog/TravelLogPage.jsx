@@ -1,25 +1,40 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom';
 import Pagination from '../../components/common/Pagination';
+import { getTravellogList } from '../../API/mytravellog';
 
 const TravelLogPage = () => {
     const navigate = useNavigate();
-    const reviews = [
-        { id: 27, title: '게시글 제목', nickname: '글쓴이', date: '2025.12.11', like: 125 },
-        { id: 26, title: '게시글 제목', nickname: '글쓴이', date: '2025.12.11', like: 125 },
-    ];
+    const [rlist, setRlist] = useState([])
     const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1)
+    const [keyword, setKeyword] = useState("")
 
-    const totalPages = 23; // 서버에서 받은 전체 페이지 수
+    useEffect(() => {
+        getTravellogList(page, keyword)
+            .then(res => {
+                console.log("리뷰리스트", res.data)
+                setRlist(res.data.mytravellogs)
+                setTotalPages(res.data.totalPages)
+            })
+            .catch(err => console.error(err))
+    }, [page, keyword])
+
 
     return (
         <div className="board-wrap">
             <div className="board-header" style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/images/review/mytravellogmain.png)` }}>
                 <h3 className='title'>Travellog</h3>
-                <form action="">
+                <form onSubmit={(e) => {
+                    e.preventDefault();
+                    setPage(1);
+                }}>
                     <div className="search-wrap">
-                        <input type="text" />
+                        <input type="text" value={keyword}
+                            onChange={(e) => setKeyword(e.target.value)}
+                            placeholder="제목 또는 작성자 검색"
+                        />
                         <button type='submit'>검색</button>
                     </div>
                 </form>
@@ -45,13 +60,13 @@ const TravelLogPage = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {reviews.map(item => (
-                            <tr key={item.id} onClick={() => navigate(`/review/${item.id}`)}>
-                                <td className="mo-none">{item.id}</td>
-                                <td className="title"><Link to="review">{item.title}</Link></td>
-                                <td className="mo-none">{item.nickname}</td>
-                                <td>{item.date}</td>
-                                <td>{item.like}</td>
+                            {rlist.map(mytravellog => (
+                            <tr key={mytravellog.id}>
+                                <td className="mo-none">{mytravellog.id}</td>
+                                    <td className="title" onClick={() => navigate(`/travelLog/${mytravellog.id}`)}>{mytravellog.title}</td>
+                                <td className="mo-none">{mytravellog.user?.username}</td>
+                                <td>{mytravellog.created_at}</td>
+                                <td>{mytravellog.like_count}</td>
                             </tr>
                             ))}
                             {Array.from({ length: 0 }).map((_, i) => (
@@ -65,7 +80,7 @@ const TravelLogPage = () => {
                     <div className="btn-wrap">
                         <button
                             className="btn-write"
-                            onClick={() => navigate('/review/write')}
+                            onClick={() => navigate('/travellog/write')}
                             >
                                 글 작성하기
                         </button>
