@@ -1,7 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 
+const TOP_SHOW_Y = 300;
+
 const ChatFabButton = () => {
   const [open, setOpen] = useState(false);
+  const [hasTopBtn, setHasTopBtn] = useState(false);
+
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([
     { role: "bot", text: "안녕하세요! 무엇을 도와드릴까요?" },
@@ -10,6 +14,14 @@ const ChatFabButton = () => {
   const panelRef = useRef(null);
   const inputRef = useRef(null);
   const scrollRef = useRef(null);
+
+  // scroll event
+  useEffect(() => {
+    const onScroll = () => setHasTopBtn(window.scrollY > TOP_SHOW_Y);
+    window.addEventListener("scroll", onScroll);
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   // 열릴 때 포커스
   useEffect(() => {
@@ -68,7 +80,7 @@ const ChatFabButton = () => {
       {/* Floating Button */}
       <button
         id="chat-fab"
-        className="chat-fab"
+        className={`chat-fab ${hasTopBtn ? 'with-top' : 'no-top'}`}
         aria-label="help"
         type="button"
         onClick={() => setOpen((v) => !v)}
@@ -85,7 +97,7 @@ const ChatFabButton = () => {
 
       {/* Chat Panel */}
       <div
-        className={`chatbot-panel ${open ? "open" : ""}`}
+        className={`chatbot-panel ${open ? "open" : ""} ${hasTopBtn ? 'with-top' : 'no-top'}`}
         ref={panelRef}
         aria-hidden={!open}
       >
