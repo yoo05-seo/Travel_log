@@ -22,7 +22,6 @@ import ChatFabButton from './components/common/ChatButton'
 import Footer from './components/common/Footer'
 import ScrollHandler from './components/common/ScrollHandler'
 import MyPageModify from './contents/user/MyPageModify'
-import ChatBot from './contents/chatbot/Chatbot'
 import NotFound from './contents/notfound'
 
 function App() {
@@ -62,7 +61,6 @@ function App() {
         <Route path="/Login" element={<Login />} />
         <Route path="/MyPage" element={<MyPage />} />
         <Route path="/MyPageModify" element={<MyPageModify />} />
-        <Route path="/chatbot" element={<ChatBot />} />
         <Route path="/*" element={<NotFound />} />
       </Routes>
 
